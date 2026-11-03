@@ -1,0 +1,256 @@
+/* ===== Cores ===== */
+:root {
+  --fundo: #eef1f5;
+  --painel: #ffffff;
+  --visor: #1e2430;
+  --visor-texto: #e8edf5;
+  --texto: #1e2430;
+  --texto-suave: #6b7484;
+  --borda: #d6dbe3;
+  --tecla: #f4f6f9;
+  --tecla-hover: #e6eaf0;
+  --funcao: #e7eefc;
+  --funcao-texto: #2a4fa8;
+  --op: #dfe4ec;
+  --destaque: #3563e9;
+  --destaque-texto: #ffffff;
+  --perigo: #fbe4e4;
+  --perigo-texto: #b3261e;
+  --raio: 10px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fundo: #12151b;
+    --painel: #1b1f27;
+    --visor: #0c0e12;
+    --visor-texto: #e8edf5;
+    --texto: #e3e7ee;
+    --texto-suave: #8a93a3;
+    --borda: #2c323d;
+    --tecla: #252a34;
+    --tecla-hover: #2f3541;
+    --funcao: #1f2b45;
+    --funcao-texto: #9db8ff;
+    --op: #2c323d;
+    --destaque: #4c78ff;
+    --perigo: #3a2023;
+    --perigo-texto: #ff9b94;
+  }
+}
+
+/* ===== Base ===== */
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 32px 16px;
+  background: var(--fundo);
+  color: var(--texto);
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+
+.calculadora {
+  width: 100%;
+  max-width: 560px;
+  background: var(--painel);
+  border: 1px solid var(--borda);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.topo h1 { margin: 0; font-size: 1.35rem; }
+.topo p  { margin: 4px 0 16px; color: var(--texto-suave); font-size: 0.9rem; }
+
+.form { display: flex; flex-direction: column; gap: 14px; }
+
+fieldset {
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+  margin: 0;
+  padding: 10px 12px 12px;
+}
+
+legend {
+  padding: 0 6px;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--texto-suave);
+}
+
+.oculto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+  padding: 0;
+}
+
+/* ===== Seleção da operação (abas) ===== */
+.operacoes {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+}
+
+.operacoes input { position: absolute; opacity: 0; pointer-events: none; }
+
+.operacoes label {
+  text-align: center;
+  padding: 10px 4px;
+  border-radius: 8px;
+  background: var(--tecla);
+  cursor: pointer;
+  font-weight: 600;
+  user-select: none;
+  transition: background 0.15s;
+}
+
+.operacoes label:hover { background: var(--tecla-hover); }
+
+.operacoes input:checked + label {
+  background: var(--destaque);
+  color: var(--destaque-texto);
+}
+
+.operacoes input:focus-visible + label { outline: 2px solid var(--destaque); outline-offset: 2px; }
+
+/* ===== Visor ===== */
+.visor {
+  background: var(--visor);
+  color: var(--visor-texto);
+  border-radius: var(--raio);
+  padding: 14px 16px;
+}
+
+.visor-rotulo { font-size: 0.85rem; opacity: 0.7; }
+
+.visor input {
+  width: 100%;
+  margin: 6px 0 12px;
+  padding: 6px 0;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  color: inherit;
+  font-family: "Cascadia Code", Consolas, monospace;
+  font-size: 1.4rem;
+  outline: none;
+}
+
+.visor input:focus { border-bottom-color: var(--destaque); }
+.visor input::placeholder { color: rgba(255, 255, 255, 0.3); }
+
+.resultado { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.resultado-rotulo { font-size: 0.75rem; text-transform: uppercase; opacity: 0.6; }
+.resultado output {
+  font-family: "Cascadia Code", Consolas, monospace;
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-align: right;
+  word-break: break-all;
+}
+
+/* ===== Parâmetros ===== */
+.parametros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.campo { display: flex; flex-direction: column; gap: 4px; flex: 1 1 110px; }
+.campo label { font-size: 0.8rem; color: var(--texto-suave); }
+
+.campo input,
+.campo select {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--borda);
+  border-radius: 8px;
+  background: var(--tecla);
+  color: var(--texto);
+  font: inherit;
+}
+
+.campo input:focus,
+.campo select:focus { outline: 2px solid var(--destaque); outline-offset: -1px; }
+
+/* Mostra só os campos/rótulos da operação escolhida (CSS puro, sem JS) */
+.so-avaliar, .so-derivada, .so-indefinida, .so-definida, .so-limite { display: none; }
+
+.form:has(#op-avaliar:checked)    .so-avaliar,
+.form:has(#op-derivada:checked)   .so-derivada,
+.form:has(#op-indefinida:checked) .so-indefinida,
+.form:has(#op-definida:checked)   .so-definida,
+.form:has(#op-limite:checked)     .so-limite { display: flex; }
+
+.visor-rotulo span { display: none; }
+.form:has(#op-avaliar:checked)    .visor-rotulo .so-avaliar,
+.form:has(#op-derivada:checked)   .visor-rotulo .so-derivada,
+.form:has(#op-indefinida:checked) .visor-rotulo .so-indefinida,
+.form:has(#op-definida:checked)   .visor-rotulo .so-definida,
+.form:has(#op-limite:checked)     .visor-rotulo .so-limite { display: inline; }
+
+/* ===== Teclado ===== */
+.teclado { display: flex; flex-direction: column; gap: 10px; }
+
+.grade { display: grid; gap: 6px; }
+.funcoes { grid-template-columns: repeat(6, 1fr); }
+.basicas { grid-template-columns: repeat(4, 1fr); }
+
+.teclado button {
+  padding: 12px 4px;
+  border: 1px solid var(--borda);
+  border-radius: 8px;
+  background: var(--tecla);
+  color: var(--texto);
+  font: inherit;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.12s, transform 0.05s;
+}
+
+.teclado button:hover  { background: var(--tecla-hover); }
+.teclado button:active { transform: scale(0.97); }
+
+.funcoes button { font-size: 0.9rem; background: var(--funcao); color: var(--funcao-texto); border-color: transparent; }
+.funcoes button.var,
+.funcoes button.const { font-style: italic; font-family: "Cambria Math", Georgia, serif; font-size: 1.05rem; }
+
+.basicas button { font-size: 1.15rem; padding: 14px 4px; }
+.basicas button.op { background: var(--op); font-weight: 600; }
+.basicas button.perigo { background: var(--perigo); color: var(--perigo-texto); border-color: transparent; font-weight: 600; }
+
+.basicas button.calcular {
+  grid-column: 1 / -1;
+  background: var(--destaque);
+  color: var(--destaque-texto);
+  border-color: transparent;
+  font-weight: 700;
+  font-size: 1.3rem;
+}
+
+.basicas button.calcular:hover { filter: brightness(1.1); }
+
+/* ===== Histórico ===== */
+.historico { margin-top: 18px; border-top: 1px solid var(--borda); padding-top: 12px; }
+.historico h2 { margin: 0 0 8px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--texto-suave); }
+.historico ol { margin: 0; padding-left: 20px; font-family: "Cascadia Code", Consolas, monospace; font-size: 0.9rem; }
+.historico li { padding: 3px 0; }
+.historico li.vazio { list-style: none; margin-left: -20px; color: var(--texto-suave); font-family: inherit; }
+
+/* ===== Celular ===== */
+@media (max-width: 420px) {
+  .calculadora { padding: 14px; }
+  .operacoes label { font-size: 0.85rem; padding: 8px 2px; }
+  .funcoes { grid-template-columns: repeat(4, 1fr); }
+}

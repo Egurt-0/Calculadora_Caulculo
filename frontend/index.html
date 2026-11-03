@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora de Cálculo I</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="calculadora">
+    <header class="topo">
+      <h1>Calculadora de Cálculo I</h1>
+      <p>Derivadas · Integrais · Limites</p>
+    </header>
+
+   
+    -->
+    <form action="/calcular" method="post" class="form">
+      <!-- Botão padrão: Enter no visor envia acao=calcular (e não a primeira tecla) -->
+      <button type="submit" name="acao" value="calcular" class="oculto" tabindex="-1" aria-hidden="true">Calcular</button>
+
+      <!-- Seleção da operação -->
+      <fieldset class="operacoes">
+        <legend>Operação</legend>
+
+        <input type="radio" name="operacao" id="op-avaliar" value="avaliar" checked>
+        <label for="op-avaliar">f(x)</label>
+
+        <input type="radio" name="operacao" id="op-derivada" value="derivada">
+        <label for="op-derivada">d/dx</label>
+
+        <input type="radio" name="operacao" id="op-indefinida" value="integral_indefinida">
+        <label for="op-indefinida">∫ dx</label>
+
+        <input type="radio" name="operacao" id="op-definida" value="integral_definida">
+        <label for="op-definida">∫ₐᵇ dx</label>
+
+        <input type="radio" name="operacao" id="op-limite" value="limite">
+        <label for="op-limite">lim</label>
+      </fieldset>
+
+      <!-- Visor -->
+      <section class="visor">
+        <label for="expressao" class="visor-rotulo">
+          <span class="so-avaliar">f(x) =</span>
+          <span class="so-derivada">d/dx [ f(x) ] , f(x) =</span>
+          <span class="so-indefinida">∫ f(x) dx , f(x) =</span>
+          <span class="so-definida">∫ₐᵇ f(x) dx , f(x) =</span>
+          <span class="so-limite">lim f(x) , f(x) =</span>
+        </label>
+        <input type="text" id="expressao" name="expressao"
+               placeholder="ex: x^2 + sin(x)" autocomplete="off" spellcheck="false">
+
+        <div class="resultado">
+          <span class="resultado-rotulo">Resultado</span>
+          <output name="resultado" for="expressao">—</output>
+        </div>
+      </section>
+
+      <!-- Parâmetros que mudam conforme a operação (CSS :has) -->
+      <fieldset class="parametros">
+        <legend>Parâmetros</legend>
+
+        <div class="campo">
+          <label for="variavel">Variável</label>
+          <select id="variavel" name="variavel">
+            <option value="x" selected>x</option>
+            <option value="y">y</option>
+            <option value="t">t</option>
+          </select>
+        </div>
+
+        <div class="campo so-avaliar">
+          <label for="valor">Em x =</label>
+          <input type="text" id="valor" name="valor" placeholder="opcional">
+        </div>
+
+        <div class="campo so-derivada">
+          <label for="ordem">Ordem</label>
+          <input type="number" id="ordem" name="ordem" min="1" max="5" value="1">
+        </div>
+
+        <div class="campo so-definida">
+          <label for="a">De a =</label>
+          <input type="text" id="a" name="a" placeholder="0">
+        </div>
+
+        <div class="campo so-definida">
+          <label for="b">Até b =</label>
+          <input type="text" id="b" name="b" placeholder="1">
+        </div>
+
+        <div class="campo so-limite">
+          <label for="ponto">x →</label>
+          <input type="text" id="ponto" name="ponto" placeholder="0, oo, -oo">
+        </div>
+
+        <div class="campo so-limite">
+          <label for="lado">Lado</label>
+          <select id="lado" name="lado">
+            <option value="ambos" selected>ambos</option>
+            <option value="direita">direita (x→a⁺)</option>
+            <option value="esquerda">esquerda (x→a⁻)</option>
+          </select>
+        </div>
+      </fieldset>
+
+      <!-- Teclado: cada botão envia name="tecla" com o texto a ser inserido -->
+      <section class="teclado">
+        <!-- Funções do Cálculo I -->
+        <div class="grade funcoes">
+          <button type="submit" name="tecla" value="sin(">sin</button>
+          <button type="submit" name="tecla" value="cos(">cos</button>
+          <button type="submit" name="tecla" value="tan(">tan</button>
+          <button type="submit" name="tecla" value="sec(">sec</button>
+          <button type="submit" name="tecla" value="csc(">csc</button>
+          <button type="submit" name="tecla" value="cot(">cot</button>
+
+          <button type="submit" name="tecla" value="asin(">sin⁻¹</button>
+          <button type="submit" name="tecla" value="acos(">cos⁻¹</button>
+          <button type="submit" name="tecla" value="atan(">tan⁻¹</button>
+          <button type="submit" name="tecla" value="ln(">ln</button>
+          <button type="submit" name="tecla" value="log(">log</button>
+          <button type="submit" name="tecla" value="exp(">eˣ</button>
+
+          <button type="submit" name="tecla" value="sqrt(">√</button>
+          <button type="submit" name="tecla" value="^2">x²</button>
+          <button type="submit" name="tecla" value="^">xʸ</button>
+          <button type="submit" name="tecla" value="abs(">|x|</button>
+          <button type="submit" name="tecla" value="1/(">1/x</button>
+          <button type="submit" name="tecla" value="!">n!</button>
+
+          <button type="submit" name="tecla" value="x" class="var">x</button>
+          <button type="submit" name="tecla" value="y" class="var">y</button>
+          <button type="submit" name="tecla" value="t" class="var">t</button>
+          <button type="submit" name="tecla" value="pi" class="const">π</button>
+          <button type="submit" name="tecla" value="E" class="const">e</button>
+          <button type="submit" name="tecla" value="oo" class="const">∞</button>
+        </div>
+
+        <!-- Operações básicas -->
+        <div class="grade basicas">
+          <button type="submit" name="acao" value="limpar" class="perigo">C</button>
+          <button type="submit" name="acao" value="apagar" class="perigo">⌫</button>
+          <button type="submit" name="tecla" value="(" class="op">(</button>
+          <button type="submit" name="tecla" value=")" class="op">)</button>
+
+          <button type="submit" name="tecla" value="7">7</button>
+          <button type="submit" name="tecla" value="8">8</button>
+          <button type="submit" name="tecla" value="9">9</button>
+          <button type="submit" name="tecla" value="/" class="op">÷</button>
+
+          <button type="submit" name="tecla" value="4">4</button>
+          <button type="submit" name="tecla" value="5">5</button>
+          <button type="submit" name="tecla" value="6">6</button>
+          <button type="submit" name="tecla" value="*" class="op">×</button>
+
+          <button type="submit" name="tecla" value="1">1</button>
+          <button type="submit" name="tecla" value="2">2</button>
+          <button type="submit" name="tecla" value="3">3</button>
+          <button type="submit" name="tecla" value="-" class="op">−</button>
+
+          <button type="submit" name="tecla" value="0">0</button>
+          <button type="submit" name="tecla" value=".">.</button>
+          <button type="submit" name="tecla" value="%" class="op">%</button>
+          <button type="submit" name="tecla" value="+" class="op">+</button>
+
+          <button type="submit" name="acao" value="calcular" class="calcular">=</button>
+        </div>
+      </section>
+    </form>
+
+    <!-- Histórico: o backend pode preencher esta lista -->
+    <section class="historico">
+      <h2>Histórico</h2>
+      <ol>
+        <li class="vazio">Nenhum cálculo ainda.</li>
+      </ol>
+    </section>
+  </main>
+</body>
+</html>
