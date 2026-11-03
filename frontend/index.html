@@ -13,8 +13,6 @@
       <p>Derivadas · Integrais · Limites</p>
     </header>
 
-   
-    -->
     <form action="/calcular" method="post" class="form">
       <!-- Botão padrão: Enter no visor envia acao=calcular (e não a primeira tecla) -->
       <button type="submit" name="acao" value="calcular" class="oculto" tabindex="-1" aria-hidden="true">Calcular</button>
@@ -23,19 +21,19 @@
       <fieldset class="operacoes">
         <legend>Operação</legend>
 
-        <input type="radio" name="operacao" id="op-avaliar" value="avaliar" checked>
+        <input type="radio" name="operacao" id="op-avaliar" value="avaliar"{% if operacao == "avaliar" %} checked{% endif %}>
         <label for="op-avaliar">f(x)</label>
 
-        <input type="radio" name="operacao" id="op-derivada" value="derivada">
+        <input type="radio" name="operacao" id="op-derivada" value="derivada"{% if operacao == "derivada" %} checked{% endif %}>
         <label for="op-derivada">d/dx</label>
 
-        <input type="radio" name="operacao" id="op-indefinida" value="integral_indefinida">
+        <input type="radio" name="operacao" id="op-indefinida" value="integral_indefinida"{% if operacao == "integral_indefinida" %} checked{% endif %}>
         <label for="op-indefinida">∫ dx</label>
 
-        <input type="radio" name="operacao" id="op-definida" value="integral_definida">
+        <input type="radio" name="operacao" id="op-definida" value="integral_definida"{% if operacao == "integral_definida" %} checked{% endif %}>
         <label for="op-definida">∫ₐᵇ dx</label>
 
-        <input type="radio" name="operacao" id="op-limite" value="limite">
+        <input type="radio" name="operacao" id="op-limite" value="limite"{% if operacao == "limite" %} checked{% endif %}>
         <label for="op-limite">lim</label>
       </fieldset>
 
@@ -49,11 +47,11 @@
           <span class="so-limite">lim f(x) , f(x) =</span>
         </label>
         <input type="text" id="expressao" name="expressao"
-               placeholder="ex: x^2 + sin(x)" autocomplete="off" spellcheck="false">
+               placeholder="ex: x^2 + sin(x)" autocomplete="off" spellcheck="false" value="{{ expressao }}">
 
         <div class="resultado">
           <span class="resultado-rotulo">Resultado</span>
-          <output name="resultado" for="expressao">—</output>
+          <output name="resultado" for="expressao">{{ resultado }}</output>
         </div>
       </section>
 
@@ -64,43 +62,43 @@
         <div class="campo">
           <label for="variavel">Variável</label>
           <select id="variavel" name="variavel">
-            <option value="x" selected>x</option>
-            <option value="y">y</option>
-            <option value="t">t</option>
+            <option value="x"{% if variavel == "x" %} selected{% endif %}>x</option>
+            <option value="y"{% if variavel == "y" %} selected{% endif %}>y</option>
+            <option value="t"{% if variavel == "t" %} selected{% endif %}>t</option>
           </select>
         </div>
 
         <div class="campo so-avaliar">
           <label for="valor">Em x =</label>
-          <input type="text" id="valor" name="valor" placeholder="opcional">
+          <input type="text" id="valor" name="valor" placeholder="opcional" value="{{ valor }}">
         </div>
 
         <div class="campo so-derivada">
           <label for="ordem">Ordem</label>
-          <input type="number" id="ordem" name="ordem" min="1" max="5" value="1">
+          <input type="number" id="ordem" name="ordem" min="1" max="5" value="{{ ordem }}">
         </div>
 
         <div class="campo so-definida">
           <label for="a">De a =</label>
-          <input type="text" id="a" name="a" placeholder="0">
+          <input type="text" id="a" name="a" placeholder="0" value="{{ a }}">
         </div>
 
         <div class="campo so-definida">
           <label for="b">Até b =</label>
-          <input type="text" id="b" name="b" placeholder="1">
+          <input type="text" id="b" name="b" placeholder="1" value="{{ b }}">
         </div>
 
         <div class="campo so-limite">
           <label for="ponto">x →</label>
-          <input type="text" id="ponto" name="ponto" placeholder="0, oo, -oo">
+          <input type="text" id="ponto" name="ponto" placeholder="0, oo, -oo" value="{{ ponto }}">
         </div>
 
         <div class="campo so-limite">
           <label for="lado">Lado</label>
           <select id="lado" name="lado">
-            <option value="ambos" selected>ambos</option>
-            <option value="direita">direita (x→a⁺)</option>
-            <option value="esquerda">esquerda (x→a⁻)</option>
+            <option value="ambos"{% if lado == "ambos" %} selected{% endif %}>ambos</option>
+            <option value="direita"{% if lado == "direita" %} selected{% endif %}>direita (x→a⁺)</option>
+            <option value="esquerda"{% if lado == "esquerda" %} selected{% endif %}>esquerda (x→a⁻)</option>
           </select>
         </div>
       </fieldset>
