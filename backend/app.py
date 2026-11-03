@@ -15,7 +15,6 @@ app = Flask(
     static_url_path=""
 )
 
-@app.get("/")
 def renderizar(expressao="", resultado="=", dados=None):
     """Renderiza a calculadora mantendo os campos enviados pelo formulário."""
     dados = dados or {}

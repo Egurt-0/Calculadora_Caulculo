@@ -13,6 +13,11 @@
       <p>Derivadas · Integrais · Limites</p>
     </header>
 
+    <section class="guia" aria-label="Como usar a calculadora">
+      <strong>Como usar:</strong> escolha uma operação, escreva a expressão e clique em <b>Calcular</b>.
+      <span>Exemplo: <code>x^2</code> para a derivada de x².</span>
+    </section>
+
     <form action="/calcular" method="post" class="form">
       <!-- Botão padrão: Enter no visor envia acao=calcular (e não a primeira tecla) -->
       <button type="submit" name="acao" value="calcular" class="oculto" tabindex="-1" aria-hidden="true">Calcular</button>
@@ -22,19 +27,19 @@
         <legend>Operação</legend>
 
         <input type="radio" name="operacao" id="op-avaliar" value="avaliar"{% if operacao == "avaliar" %} checked{% endif %}>
-        <label for="op-avaliar">f(x)</label>
+        <label for="op-avaliar">Avaliar</label>
 
         <input type="radio" name="operacao" id="op-derivada" value="derivada"{% if operacao == "derivada" %} checked{% endif %}>
-        <label for="op-derivada">d/dx</label>
+        <label for="op-derivada">Derivada</label>
 
         <input type="radio" name="operacao" id="op-indefinida" value="integral_indefinida"{% if operacao == "integral_indefinida" %} checked{% endif %}>
-        <label for="op-indefinida">∫ dx</label>
+        <label for="op-indefinida">∫ indef.</label>
 
         <input type="radio" name="operacao" id="op-definida" value="integral_definida"{% if operacao == "integral_definida" %} checked{% endif %}>
-        <label for="op-definida">∫ₐᵇ dx</label>
+        <label for="op-definida">∫ definida</label>
 
         <input type="radio" name="operacao" id="op-limite" value="limite"{% if operacao == "limite" %} checked{% endif %}>
-        <label for="op-limite">lim</label>
+        <label for="op-limite">Limite</label>
       </fieldset>
 
       <!-- Visor -->
@@ -47,7 +52,7 @@
           <span class="so-limite">lim f(x) , f(x) =</span>
         </label>
         <input type="text" id="expressao" name="expressao"
-               placeholder="ex: x^2 + sin(x)" autocomplete="off" spellcheck="false" value="{{ expressao }}">
+               placeholder="Ex.: x^2 + sin(x)" autocomplete="off" spellcheck="false" value="{{ expressao }}" required>
 
         <div class="resultado">
           <span class="resultado-rotulo">Resultado</span>
@@ -69,7 +74,7 @@
         </div>
 
         <div class="campo so-avaliar">
-          <label for="valor">Em x =</label>
+          <label for="valor">Substituir <span class="nome-variavel">x</span> por</label>
           <input type="text" id="valor" name="valor" placeholder="opcional" value="{{ valor }}">
         </div>
 
@@ -89,7 +94,7 @@
         </div>
 
         <div class="campo so-limite">
-          <label for="ponto">x →</label>
+          <label for="ponto"><span class="nome-variavel">x</span> →</label>
           <input type="text" id="ponto" name="ponto" placeholder="0, oo, -oo" value="{{ ponto }}">
         </div>
 
@@ -103,7 +108,15 @@
         </div>
       </fieldset>
 
-      <!-- Teclado: cada botão envia name="tecla" com o texto a ser inserido -->
+      <section class="exemplos" aria-label="Exemplos rápidos">
+        <span>Exemplos rápidos:</span>
+        <button type="button" data-exemplo="avaliar" data-expressao="x^2 + sin(x)" data-valor="2">avaliar x² em 2</button>
+        <button type="button" data-exemplo="derivada" data-expressao="x^3">derivada de x³</button>
+        <button type="button" data-exemplo="integral_definida" data-expressao="x^2" data-a="0" data-b="3">∫ x² de 0 a 3</button>
+        <button type="button" data-exemplo="limite" data-expressao="sin(x)/x" data-ponto="0">lim sin(x)/x</button>
+      </section>
+
+      <!-- O teclado completa a expressão sem recarregar a página. -->
       <section class="teclado">
         <!-- Funções do Cálculo I -->
         <div class="grade funcoes">
@@ -176,5 +189,57 @@
       </ol>
     </section>
   </main>
+  <script>
+    const expressao = document.querySelector("#expressao");
+    const variavel = document.querySelector("#variavel");
+
+    function atualizarNomeDaVariavel() {
+      document.querySelectorAll(".nome-variavel").forEach((elemento) => {
+        elemento.textContent = variavel.value;
+      });
+    }
+
+    document.querySelectorAll('button[name="tecla"]').forEach((botao) => {
+      botao.addEventListener("click", (evento) => {
+        evento.preventDefault();
+        const inicio = expressao.selectionStart;
+        const fim = expressao.selectionEnd;
+        expressao.setRangeText(botao.value, inicio, fim, "end");
+        expressao.focus();
+      });
+    });
+
+    document.querySelector('button[name="acao"][value="limpar"]').addEventListener("click", (evento) => {
+      evento.preventDefault();
+      expressao.value = "";
+      expressao.focus();
+    });
+
+    document.querySelector('button[name="acao"][value="apagar"]').addEventListener("click", (evento) => {
+      evento.preventDefault();
+      const inicio = expressao.selectionStart;
+      const fim = expressao.selectionEnd;
+      if (inicio !== fim) {
+        expressao.setRangeText("", inicio, fim, "end");
+      } else if (inicio > 0) {
+        expressao.setRangeText("", inicio - 1, inicio, "end");
+      }
+      expressao.focus();
+    });
+
+    document.querySelectorAll("[data-exemplo]").forEach((botao) => {
+      botao.addEventListener("click", () => {
+        document.querySelector(`#op-${botao.dataset.exemplo.replace("integral_", "")}`).checked = true;
+        expressao.value = botao.dataset.expressao;
+        ["valor", "a", "b", "ponto"].forEach((campo) => {
+          if (botao.dataset[campo] !== undefined) document.querySelector(`#${campo}`).value = botao.dataset[campo];
+        });
+        expressao.focus();
+      });
+    });
+
+    variavel.addEventListener("change", atualizarNomeDaVariavel);
+    atualizarNomeDaVariavel();
+  </script>
 </body>
 </html>
