@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request
 
+# importando tudo o que preciso do arquivo calculo
 from calculo import (
     derivada,
     integral_definida,
@@ -8,6 +9,8 @@ from calculo import (
     limite,
     obter_variavel,
 )
+
+# aqui definimos a aplicacao flask, que vai renderizar o frontend e receber as requisicoes que o usuario faz pelo frontend, chamando as funcoes do calculo.py para realizar os calculos
 app = Flask(
     __name__,
     template_folder="../frontend",
@@ -15,8 +18,8 @@ app = Flask(
     static_url_path=""
 )
 
+# funcao de renderizar, que tem como parametro a expressao, o resultado e os dados do formulario, e retorna o formato no index.html com os valores preenchidos
 def renderizar(expressao="", resultado="=", dados=None):
-    """Renderiza a calculadora mantendo os campos enviados pelo formulário."""
     dados = dados or {}
     return render_template(
         "index.html",
@@ -32,18 +35,18 @@ def renderizar(expressao="", resultado="=", dados=None):
         lado=dados.get("lado", "ambos"),
     )
 
-
+# funcao de avaliar, que tem como parametro a expressao, a variavel e o valor, e retorna o resultado da avaliacao da expressao com o valor da variavel substituido
 def avaliar(expressao, variavel, valor):
     resultado = interpretar(expressao)
     if valor.strip():
         resultado = resultado.subs(obter_variavel(variavel), interpretar(valor))
     return resultado
 
-
+# rota principal, que renderiza a pagina inicial do frontend
 @app.get("/")
 def home():
     return renderizar()
-
+# rota de calculo, que recebe os dados do formulario, e chama as funcoes do calculo.py para realizar os calculos, e retorna o resultado para o frontend na posicao certa definida pelo html
 @app.post("/calcular")
 def calcular():
     dados = request.form
@@ -52,6 +55,7 @@ def calcular():
     tecla = dados.get("tecla")
     operacao = dados.get("operacao", "avaliar")
     resultado = "="
+    # if e elif de todas as acoes que o usuario pode fazer
     if tecla:
         expressao += tecla
     elif acao == "limpar":
@@ -81,10 +85,11 @@ def calcular():
             else:
                 raise ValueError("Operação inválida.")
             resultado = str(resultado)
+            # trata os erros que podem ocorrer durante a interpretacao da expressao, e retorna o erro para o frontend
         except (ArithmeticError, KeyError, TypeError, ValueError) as erro:
             resultado = f"Erro: {erro}"
     return renderizar(expressao, resultado, dados)
 
-    
+# faz com que o arquivo so seja executado com um comado direto, e nao imediatamente apos ser importado
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True) # Debugando antes de rodar o app, para que possamos ver os erros no terminal, e nao apenas no front
